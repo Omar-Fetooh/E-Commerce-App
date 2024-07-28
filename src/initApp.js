@@ -1,9 +1,8 @@
 import connectionDB from '../database/dbConnection.js'
-connectionDB()
 import * as routers from "../src/modules/index.routes.js"
 
 export const initApp = (app, express) => {
-
+    connectionDB()
     const port = process.env.PORT || 3000
 
     app.use(express.json())
