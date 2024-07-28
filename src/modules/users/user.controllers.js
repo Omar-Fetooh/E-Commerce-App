@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import { AppError, catchAsyncHandler } from "../../utils/error.js";
 import userModel from "../../../database/models/user.model.js"
 import { sendEmail } from "../../service/sendEmail.js";
+import { customAlphabet } from "nanoid";
 
 
 // =====================================signUp============================================
@@ -64,4 +65,47 @@ export const refreshToken = catchAsyncHandler(async (req, res, next) => {
 
     res.status(200).json({ msg: "done" })
 })
+// =====================================forgetPassword============================================
+export const forgetPassword = catchAsyncHandler(async (req, res, next) => {
+    const { email } = req.body;
 
+    const user = await userModel.findOne({ email: email.toLowerCase() })
+    if (!user) return next(new AppError("User not exist", 404))
+
+    const code = customAlphabet("0123456789", 5);
+    const newCode = code();
+
+    await sendEmail(email, "code for reset password", `<h1>Your code is ${newCode}</h1>`)
+    await userModel.updateOne({ email: email }, { code: newCode })
+
+    res.status(200).json({ msg: "done" })
+})
+
+// =====================================resetPassword============================================
+export const resetPassword = catchAsyncHandler(async (req, res, next) => {
+    const { email, code, password } = req.body;
+
+    const user = await userModel.findOne({ email: email.toLowerCase() })
+    if (!user) return next(new AppError("User not exist", 404))
+
+    if (code != user.code || code == "") return next(new AppError("invalid Code", 400))
+
+    const hash = bcrypt.hashSync(password);
+    await userModel.updateOne({ email }, { password: hash, code: "" })
+
+    res.status(200).json({ msg: "done" })
+})
+// =====================================signIn============================================
+export const signIn = catchAsyncHandler(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    const user = await userModel.findOne({ email: email.toLowerCase(), confirmed: true })
+    if (!user || !bcrypt.compareSync(password, user.password))
+        return next(new AppError("User not exist or wrong password", 404))
+
+    const token = jwt.sign({ email, role: user.role }, process.env.signatureKey)
+
+    await userModel.updateOne({ email }, { loggedIn: true })
+
+    res.status(200).json({ msg: "done", token })
+})
