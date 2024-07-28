@@ -19,7 +19,7 @@ export const signUp = catchAsyncHandler(async (req, res, next) => {
     const token = jwt.sign({ email }, process.env.signatureKey, { expiresIn: 60 * 2 })
     const link = `${req.protocol}://${req.headers.host}/users/verifyEmail/${token}`
 
-    const rfToken = jwt.sign({ email }, signatureKeyRefresh)
+    const rfToken = jwt.sign({ email }, process.env.signatureKeyRefresh)
     const rfLink = `${req.protocol}://${req.headers.host}/users/refreshToken/${rfToken}`
 
     await sendEmail(email, "verify your email", `<a href="${link}"> Click Here </a><br>
@@ -91,7 +91,7 @@ export const resetPassword = catchAsyncHandler(async (req, res, next) => {
     if (code != user.code || code == "") return next(new AppError("invalid Code", 400))
 
     const hash = bcrypt.hashSync(password);
-    await userModel.updateOne({ email }, { password: hash, code: "" })
+    await userModel.updateOne({ email }, { password: hash, code: "", passwordChangeAt: Date.now() })
 
     res.status(200).json({ msg: "done" })
 })

@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken"
-import { AppError } from "../utils/error.js";
+import { AppError, catchAsyncHandler } from "../utils/error.js";
 import User from "../../database/models/user.model.js";
 
 export const auth = (roles) => {
-    return async (req, res, next) => {
+    return catchAsyncHandler(async (req, res, next) => {
         try {
             // Authentication
             const { token } = req.headers;
@@ -30,11 +30,15 @@ export const auth = (roles) => {
 
             // Authorization
             if (!roles.includes(user.role)) throw new AppError("you don't have permission", 401)
+
+            if (parseInt(user.passwordChangeAt.getTime() / 1000) > decoded.iat) {
+                return res.status(403).json({ msg: "Token expired please login again" })
+            }
             req.user = user;
             next()
         }
         catch (error) {
             throw new AppError("catch error in auth", 400)
         }
-    }
+    })
 }
