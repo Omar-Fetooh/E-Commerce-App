@@ -34,3 +34,40 @@ export const createCategory = catchAsyncHandler(async (req, res, next) => {
 
     res.status(201).json({ msg: "category Added Successfully", category })
 })
+
+// =================================  updateCategory  ==================================================
+export const updateCategory = catchAsyncHandler(async (req, res, next) => {
+    const { name } = req.body;
+    const { id } = req.params;
+
+    const category = await categoryModel.findOne({ _id: id, createdBy: req.user._id });
+    if (!category)
+        return next(new AppError("category does not  exist", 404))
+
+    if (name) {
+        if (name.toLowerCase() === category.name) {
+            return next(new AppError("name must be different from previous name ", 400))
+        }
+        if (await categoryModel.findOne({ name: name.toLowerCase() })) {
+            return next(new AppError("name already exist ", 409))
+        }
+
+        category.name = name.toLowerCase();
+        category.slug = slugify(name, {
+            replacement: "_",
+            lower: true
+        })
+
+        if (req.file) {
+            await cloudinary.uploader.destroy(category.image.public_id)
+            const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
+                folder: `Ecommerce/categories/${category.customId}`
+            })
+            category.image = { secure_url, public_id }
+        }
+
+        await category.save()
+
+        res.status(201).json({ msg: "category updated Successfully", category })
+    }
+})

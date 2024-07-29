@@ -21,6 +21,7 @@ const categorySchema = mongoose.Schema({
         secure_url: String,
         public_id: String
     },
+    customId: String,
     createdBy: {
         type: String,
         ref: 'user',
