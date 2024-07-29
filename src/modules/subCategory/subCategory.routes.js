@@ -6,7 +6,7 @@ import * as SCC from "./subCategory.controllers.js";
 import { createSubCategorySchema, updateSubCategorySchema } from "./subCategory.validations.js";
 
 
-const subCategoryRouter = Router();
+const subCategoryRouter = Router({ mergeParams: true });
 
 subCategoryRouter.post("/",
     multerHost(validExtension.image).single("image"),

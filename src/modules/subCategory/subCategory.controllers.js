@@ -8,13 +8,13 @@ import slugify from "slugify";
 
 // =================================  createSubCategory  ==================================================
 export const createSubCategory = catchAsyncHandler(async (req, res, next) => {
-    const { name, category } = req.body;
+    const { name } = req.body;
 
-    const categoryExist = await categoryModel.findById(category);
+    const categoryExist = await categoryModel.findById(req.params.categoryId);
     if (!categoryExist)
         return next(new AppError("category does not exist", 404))
 
-    const subCategoryExist = await subCategoryModel.findOne({ name: category.toLowerCase() });
+    const subCategoryExist = await subCategoryModel.findOne({ name: name.toLowerCase() });
     if (subCategoryExist)
         return next(new AppError("subCategory already exists", 409))
 
@@ -32,7 +32,7 @@ export const createSubCategory = catchAsyncHandler(async (req, res, next) => {
             replacement: '_',
             lower: true
         }),
-        category,
+        category: req.params.categoryId,
         image: { secure_url, public_id },
         createdBy: req.user._id,
         customId
