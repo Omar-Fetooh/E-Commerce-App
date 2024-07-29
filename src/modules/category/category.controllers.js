@@ -5,6 +5,7 @@ import { AppError, catchAsyncHandler } from "../../utils/error.js";
 import { nanoid } from "nanoid";
 import cloudinary from "../../utils/cloudinary.js"
 import slugify from "slugify";
+import subCategoryModel from "../../../database/models/subCategory.model.js";
 // =================================  createCategory  ==================================================
 export const createCategory = catchAsyncHandler(async (req, res, next) => {
     const { name } = req.body;
@@ -70,4 +71,33 @@ export const updateCategory = catchAsyncHandler(async (req, res, next) => {
 
     res.status(201).json({ msg: "category updated Successfully", category })
 
+})
+
+// =================================  getCategories ==================================================
+export const getCategories = catchAsyncHandler(async (req, res, next) => {
+
+    const categories = await categoryModel.find().populate({
+        path: "subCategories"
+    })
+
+    res.status(200).json({ msg: "done", categories })
+
+})
+
+// =================================  deleteCategory ==================================================
+export const deleteCategory = catchAsyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    const category = await categoryModel.findOneAndDelete({
+        _id: id,
+        createdBy: req.user._id
+    })
+
+    if (!category) return next(new AppError("category does not exist or you don't have permission", 401))
+
+    await subCategoryModel.deleteMany({ category: category._id })
+
+    await cloudinary.api.delete_resources_by_prefix(`Ecommerce/categories/${category.customId}`)
+    await cloudinary.api.delete_folder(`Ecommerce/categories/${category.customId}`)
+
+    res.status(200).json({ msg: "done" })
 })

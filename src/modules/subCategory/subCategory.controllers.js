@@ -41,7 +41,7 @@ export const createSubCategory = catchAsyncHandler(async (req, res, next) => {
     res.status(201).json({ msg: "subCategory Added Successfully", subCategory })
 })
 
-// =================================  updateCategory  ==================================================
+// =================================  updateSubCategory  ==================================================
 export const updateSubCategory = catchAsyncHandler(async (req, res, next) => {
     const { name } = req.body;
     const { id } = req.params;
@@ -78,4 +78,21 @@ export const updateSubCategory = catchAsyncHandler(async (req, res, next) => {
 
     res.status(201).json({ msg: "SubCategory updated Successfully", subCategory })
 
+})
+
+// =================================  getSubCategories ==================================================
+export const getSubCategories = catchAsyncHandler(async (req, res, next) => {
+
+    const subCategories = await subCategoryModel.find().populate([
+        {
+            path: "category",
+            select: "-_id"
+        },
+        {
+            path: "createdBy",
+            select: "-_id"
+        }
+    ])
+
+    res.status(201).json({ msg: "done", subCategories })
 })

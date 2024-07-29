@@ -4,7 +4,7 @@ import { validation } from "../../middlewares/validation.js"
 import { auth } from "../../middlewares/auth.js"
 import * as SCC from "./subCategory.controllers.js";
 import { createSubCategorySchema, updateSubCategorySchema } from "./subCategory.validations.js";
-
+import { systemRoles } from "../../utils/systemRoles.js";
 
 const subCategoryRouter = Router({ mergeParams: true });
 
@@ -20,6 +20,6 @@ subCategoryRouter.put("/:id",
     auth(["admin"]),
     SCC.updateSubCategory)
 
-
+subCategoryRouter.get("/", auth(Object.values(systemRoles)), SCC.getSubCategories)
 
 export default subCategoryRouter  

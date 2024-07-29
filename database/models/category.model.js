@@ -29,7 +29,15 @@ const categorySchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+})
+
+categorySchema.virtual("subCategories", {
+    ref: "subCategory",
+    localField: "_id",
+    foreignField: "category"
 })
 
 const categoryModel = mongoose.model('category', categorySchema)

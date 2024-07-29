@@ -5,6 +5,7 @@ import { createCategorySchema, updateCategorySchema } from "./category.validatio
 import { validation } from "../../middlewares/validation.js"
 import { auth } from "../../middlewares/auth.js"
 import subCategoryRouter from "../subCategory/subCategory.routes.js";
+import { systemRoles } from "../../utils/systemRoles.js";
 
 
 
@@ -24,5 +25,12 @@ categoryRouter.put("/:id",
     auth(["admin"]),
     CC.updateCategory)
 
+categoryRouter.get("/",
+    auth(Object.values(systemRoles)),
+    CC.getCategories)
+
+categoryRouter.delete("/:id",
+    auth(Object.values(systemRoles)),
+    CC.deleteCategory)
 
 export default categoryRouter  

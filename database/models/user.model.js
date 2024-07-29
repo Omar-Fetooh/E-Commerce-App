@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { systemRoles } from '../../src/utils/systemRoles.js';
 
 const userSchema = mongoose.Schema({
     name: {
@@ -36,8 +37,8 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["user", "admin"],
-        default: "user"
+        enum: Object.values(systemRoles),
+        default: systemRoles.user
     },
     code: String,
     passwordChangeAt: Date
