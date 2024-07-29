@@ -63,19 +63,19 @@ export const updateSubCategory = catchAsyncHandler(async (req, res, next) => {
             replacement: "_",
             lower: true
         })
-
-        const category = await categoryModel.findOne({ _id: subCategory.category })
-
-        if (req.file) {
-            await cloudinary.uploader.destroy(subCategory.image.public_id)
-            const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
-                folder: `Ecommerce/categories/${category.customId}/subCategories/${subCategory.customId}`
-            })
-            subCategory.image = { secure_url, public_id }
-        }
-
-        await subCategory.save()
-
-        res.status(201).json({ msg: "SubCategory updated Successfully", subCategory })
     }
+    const category = await categoryModel.findOne({ _id: subCategory.category })
+
+    if (req.file) {
+        await cloudinary.uploader.destroy(subCategory.image.public_id)
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
+            folder: `Ecommerce/categories/${category.customId}/subCategories/${subCategory.customId}`
+        })
+        subCategory.image = { secure_url, public_id }
+    }
+
+    await subCategory.save()
+
+    res.status(201).json({ msg: "SubCategory updated Successfully", subCategory })
+
 })

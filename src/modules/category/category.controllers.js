@@ -57,17 +57,17 @@ export const updateCategory = catchAsyncHandler(async (req, res, next) => {
             replacement: "_",
             lower: true
         })
-
-        if (req.file) {
-            await cloudinary.uploader.destroy(category.image.public_id)
-            const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
-                folder: `Ecommerce/categories/${category.customId}`
-            })
-            category.image = { secure_url, public_id }
-        }
-
-        await category.save()
-
-        res.status(201).json({ msg: "category updated Successfully", category })
     }
+    if (req.file) {
+        await cloudinary.uploader.destroy(category.image.public_id)
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
+            folder: `Ecommerce/categories/${category.customId}`
+        })
+        category.image = { secure_url, public_id }
+    }
+
+    await category.save()
+
+    res.status(201).json({ msg: "category updated Successfully", category })
+
 })
