@@ -8,3 +8,12 @@ export const createSubCategorySchema = {
     file: generalFields.file.required(),
     headers: generalFields.headers.required()
 }
+
+export const updateSubCategorySchema = {
+    body: Joi.object({
+        name: Joi.string().min(3).max(30),
+        category: generalFields.id
+    }),
+    file: generalFields.file,
+    headers: generalFields.headers.required()
+}

@@ -32,5 +32,5 @@ export const generalFields = {
         connection: Joi.string(),
         token: Joi.string().required()
     }),
-    id: Joi.string().custom(objectIdValidation).required()
+    id: Joi.string().custom(objectIdValidation)
 }
