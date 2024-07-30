@@ -10,6 +10,7 @@ export const initApp = (app, express) => {
     app.use('/categories', routers.categoryRouter)
     app.use("/subCategories", routers.subCategoryRouter)
     app.use("/brands", routers.brandRouter)
+    app.use("/products", routers.productRouter)
 
     app.use('*', (req, res, next) => {
         next(new AppError(`invalid URL ${req.originalUrl} not found`, 404))

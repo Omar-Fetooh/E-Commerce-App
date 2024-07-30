@@ -8,7 +8,7 @@ const objectIdValidation = (value, helper) => {
 export const generalFields = {
     email: Joi.string().email().required(),
     password: Joi.string().min(6).max(30).required(),
-
+    rePassword: Joi.string().valid(Joi.ref('password')).required(),
     file: Joi.object({
         size: Joi.number().positive().required(),
         path: Joi.string().required(),
