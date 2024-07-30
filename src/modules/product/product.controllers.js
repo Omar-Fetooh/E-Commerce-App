@@ -1,12 +1,13 @@
-import { AppError, catchAsyncHandler } from "../../utils/error.js";
-import cloudinary from "../../utils/cloudinary.js"
-
 import { nanoid } from "nanoid";
 import slugify from "slugify";
+
 import subCategoryModel from "../../../database/models/subCategory.model.js";
 import brandModel from "../../../database/models/brand.model.js"
 import categoryModel from "../../../database/models/category.model.js";
+import { AppError, catchAsyncHandler } from "../../utils/error.js";
+import cloudinary from "../../utils/cloudinary.js"
 import productModel from "../../../database/models/product.model.js";
+
 // =================================  createProduct  ==================================================
 export const createProduct = catchAsyncHandler(async (req, res, next) => {
     const { title, description, category, subCategory, brand, price, discount, stock } = req.body;
@@ -37,11 +38,14 @@ export const createProduct = catchAsyncHandler(async (req, res, next) => {
     let list = []
     for (const file of req.files.coverImages) {
         const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-            folder: `Ecommerce/categories/${categoryExist.customId}/subCategories/${subCategoryExist.customId}/products/${customId}`
+            folder: `Ecommerce/categories/${categoryExist.customId}/subCategories/${subCategoryExist.customId}/products/${customId}/coverImages`
         })
         list.push({ secure_url, public_id })
     }
-    const { secure_url, public_id } = req.files.image[0];
+
+    const { secure_url, public_id } = await cloudinary.uploader.upload(req.files.image[0].path, {
+        folder: `Ecommerce/categories/${categoryExist.customId}/subCategories/${subCategoryExist.customId}/products/${customId}`
+    })
 
     const product = await productModel.create({
         title,
@@ -62,6 +66,5 @@ export const createProduct = catchAsyncHandler(async (req, res, next) => {
         image: { secure_url, public_id },
         coverImages: list
     })
-
     res.status(201).json({ msg: "product Added Successfully", product })
 })
