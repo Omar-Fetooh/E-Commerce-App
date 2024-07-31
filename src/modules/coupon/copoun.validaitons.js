@@ -17,3 +17,13 @@ export const createCouponSchmea = {
     }),
     headers: generalFields.headers.required()
 }
+
+export const updateCouponSchmea = {
+    body: Joi.object({
+        code: Joi.string().min(3).max(30),
+        amount: Joi.number().min(1).max(100).integer(),
+        fromDate: Joi.date().greater(Date.now()),
+        toDate: Joi.date().greater(Joi.ref('fromDate'))
+    }),
+    headers: generalFields.headers.required()
+}
