@@ -7,3 +7,14 @@ export const createCartSchema = {
     }).required(),
     headers: generalFields.headers.required()
 }
+
+export const deleteFromCartSchema = {
+    body: Joi.object({
+        productId: generalFields.id.required(),
+    }).required(),
+    headers: generalFields.headers.required()
+}
+
+export const clearCartSchema = {
+    headers: generalFields.headers.required()
+}

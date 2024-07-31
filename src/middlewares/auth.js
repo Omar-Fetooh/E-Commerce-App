@@ -19,7 +19,6 @@ export const auth = (roles = []) => {
                 next(new AppError("invalid token", 400))
             }
 
-
             const decoded = jwt.verify(newToken, process.env.signatureKey)
             if (!decoded?.email) {
                 next(new AppError("invalid token payload ", 400))
