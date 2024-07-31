@@ -6,12 +6,14 @@ export const initApp = (app, express) => {
     const port = process.env.PORT || 3000
 
     app.use(express.json())
+
     app.use("/users", routers.userRouter)
     app.use('/categories', routers.categoryRouter)
     app.use("/subCategories", routers.subCategoryRouter)
     app.use("/brands", routers.brandRouter)
     app.use("/products", routers.productRouter)
     app.use("/coupons", routers.couponRouter)
+    app.use("/cart", routers.cartRouter)
 
     app.use('*', (req, res, next) => {
         next(new AppError(`invalid URL ${req.originalUrl} not found`, 404))
