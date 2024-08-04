@@ -70,5 +70,73 @@ export const createOrder = catchAsyncHandler(async (req, res, next) => {
         paymentMethod,
         status: paymentMethod == "card" ? "placed" : "waitPayment",
     })
+
+    // to push the user in coupon model to not let the user use the same coupon again 
+    if (req.body?.coupon) {
+        await couponModel.updateOne({ _id: req.body.coupon._id },
+            {
+                $push: { usedBy: req.user._id }
+            })
+    }
+
+    // decrement the product's stock by order's quantity 
+    for (const product of finalProducts) {
+        await productModel.findByIdAndUpdate({ _id: product.productId }, {
+            $inc: { stock: -product.quantity }
+        })
+    }
+
+    // make the cart empty if user ordered through it 
+    if (flag) {
+        await cartModel.updateOne(
+            { user: req.user._id },
+            {
+                products: []
+            }
+        )
+    }
+
     res.status(201).json({ msg: "order Added Successfully", order })
+})
+
+// =================================  cancelOrder  ==================================================
+
+export const cancelOrder = catchAsyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    const order = await orderModel.findOne({ _id: id, user: req.user._id });
+    if (!order) {
+        return next(new AppError("order not found", 404))
+    }
+
+    if ((order.paymentMethod == "cash" && order.status !== "placed") || (order.paymentMethod == "card" && order.status !== "waitPayment")) {
+        console.log(order.paymentMethod);
+        console.log(order.status);
+
+        return next(new AppError("order can not be canceled", 400))
+    }
+
+    await orderModel.updateOne({ _id: id },
+        {
+            status: "cancelled",
+            reason,
+            cancelledBy: req.user._id
+        }
+    )
+
+    if (order?.couponId) {
+        await couponModel.updateOne({ _id: order?.couponId },
+            {
+                $pull: { usedBy: req.user._id }
+            }
+        )
+    }
+
+    for (const product of order.products) {
+        await productModel.updateOne({ _id: product.productId }, {
+            $inc: { stock: product.quantity }
+        })
+    }
+    res.status(200).json({ msg: "product cancelled successfully" })
 })

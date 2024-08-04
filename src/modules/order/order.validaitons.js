@@ -14,3 +14,10 @@ export const createOrderSchmea = {
     headers: generalFields.headers.required()
 }
 
+
+export const cancelOrderSchmea = {
+    body: Joi.object({
+        reason: Joi.string().required(),
+    }),
+    headers: generalFields.headers.required(),
+}

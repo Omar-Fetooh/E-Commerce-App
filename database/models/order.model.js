@@ -56,7 +56,7 @@ const orderSchema = mongoose.Schema({
         enum: ["placed", "waitPayment", "delivered", "onWay", "cancelled", "rejected"],
         default: "placed"
     },
-    canceledBy: {
+    cancelledBy: {
         type: Types.ObjectId,
         ref: "user",
     },
