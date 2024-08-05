@@ -65,9 +65,15 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 1,
         required: true
+    },
+    rateAvg: {
+        type: Number,
+        default: 0,
+    },
+    rateNum: {
+        type: Number,
+        default: 0,
     }
-
-
 },
     {
         timestamps: true,

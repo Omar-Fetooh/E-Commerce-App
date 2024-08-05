@@ -15,6 +15,7 @@ export const initApp = (app, express) => {
     app.use("/coupons", routers.couponRouter)
     app.use("/cart", routers.cartRouter)
     app.use("/orders", routers.orderRouter)
+    app.use("reviews", routers.reviewRouter)
 
     app.use('*', (req, res, next) => {
         next(new AppError(`invalid URL ${req.originalUrl} not found`, 404))
