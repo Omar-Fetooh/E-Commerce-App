@@ -1,4 +1,3 @@
-
 let dataMethod = ["body", "query", "params", "headers", "file", "files"];
 
 export const validation = (schema) => {

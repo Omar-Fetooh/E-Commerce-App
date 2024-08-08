@@ -5,10 +5,12 @@ import { auth } from "../../middlewares/auth.js"
 import * as PC from "./product.controllers.js";
 import { createProductSchema } from "./product.validations.js";
 import reviewRouter from "../review/review.routes.js";
+import wishListRouter from "../wishList/wishList.routes.js";
 
 const productRouter = Router({ mergeParams: true });
 
 productRouter.use("/:productId/reviews", reviewRouter)
+productRouter.use("/:productId/wishList", wishListRouter)
 
 productRouter.post("/",
     multerHost(validExtension.image).fields([
