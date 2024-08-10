@@ -6,6 +6,7 @@ import * as PC from "./product.controllers.js";
 import { createProductSchema } from "./product.validations.js";
 import reviewRouter from "../review/review.routes.js";
 import wishListRouter from "../wishList/wishList.routes.js";
+import { systemRoles } from "../../utils/systemRoles.js";
 
 const productRouter = Router({ mergeParams: true });
 
@@ -21,5 +22,9 @@ productRouter.post("/",
     auth(["admin"]),
     PC.createProduct)
 
+productRouter.get("/",
+    // auth(Object.values(systemRoles)),
+    PC.getProducts
+)
 
 export default productRouter  

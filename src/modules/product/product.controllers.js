@@ -7,6 +7,7 @@ import categoryModel from "../../../database/models/category.model.js";
 import { AppError, catchAsyncHandler } from "../../utils/error.js";
 import cloudinary from "../../utils/cloudinary.js"
 import productModel from "../../../database/models/product.model.js";
+import { ApiFeatures } from "../../utils/ApiFeatures.js";
 
 // =================================  createProduct  ==================================================
 export const createProduct = catchAsyncHandler(async (req, res, next) => {
@@ -67,4 +68,19 @@ export const createProduct = catchAsyncHandler(async (req, res, next) => {
         coverImages: list
     })
     res.status(201).json({ msg: "product Added Successfully", product })
+})
+
+// =================================  getProducts  ==================================================
+export const getProducts = catchAsyncHandler(async (req, res, next) => {
+
+    const apiFeature = new ApiFeatures(productModel.find(), req.query)
+        .pagination()
+        .filter()
+        .search()
+        .sort()
+        .select()
+
+    const products = await apiFeature.mongooseQuery
+
+    res.status(200).json({ msg: "done", page: apiFeature.page, products })
 })
