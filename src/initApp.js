@@ -23,7 +23,7 @@ export const initApp = (app, express) => {
 
     app.use((err, req, res, next) => {
         const { message, statusCode } = err;
-        res.status(statusCode || 500).json(message);
+        res.status(statusCode || 500).json({ message, stack: err.stack });
     })
 
     app.get('/', (req, res) => res.send('Hello World!'))
