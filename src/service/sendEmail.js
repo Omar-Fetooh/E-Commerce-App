@@ -1,7 +1,7 @@
 import { createTransport } from "nodemailer";
 
 
-export const sendEmail = async (to, subject, html) => {
+export const sendEmail = async (to, subject, html, attachments = []) => {
 
     const transporter = createTransport({
         service: "gmail",
@@ -16,6 +16,7 @@ export const sendEmail = async (to, subject, html) => {
         to: to ? to : "", // list of receivers
         subject: subject ? subject : "Hello ✔", // Subject line
         html: html ? html : "<b>Hello world?</b>", // html body
+        attachments
     });
 
     if (info.accepted.length) return true

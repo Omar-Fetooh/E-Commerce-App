@@ -3,6 +3,8 @@ import couponModel from "../../../database/models/coupon.model.js";
 import cartModel from "../../../database/models/cart.model.js";
 import productModel from "../../../database/models/product.model.js";
 import { AppError, catchAsyncHandler } from "../../utils/error.js";
+import { createInvoice } from "../../utils/pdf.js";
+import { sendEmail } from "../../service/sendEmail.js";
 
 // =================================  createOrder  ==================================================
 export const createOrder = catchAsyncHandler(async (req, res, next) => {
@@ -96,6 +98,35 @@ export const createOrder = catchAsyncHandler(async (req, res, next) => {
         )
     }
 
+    const invoice = {
+        shipping: {
+            name: req.user.name,
+            address: req.user.address,
+            city: "Cairo",
+            state: "Cairo",
+            country: "Egypt",
+            postal_code: 94111
+        },
+        items: order.products,
+        subtotal: order.subPrice,
+        paid: order.totalPrice,
+        invoice_nr: order._id,
+        date: order.createdAt,
+        coupon: req.body?.coupon?.amount || 0
+    };
+
+    await createInvoice(invoice, "invoice.pdf");
+
+    await sendEmail(req.user.email, "Order Placed", `Your Order has been placed Successfully`, [
+        {
+            path: "invoice.pdf",
+            contentType: "application/pdf"
+        },
+        {
+            path: "noon.png",
+            contentType: "image/png "
+        },
+    ])
     res.status(201).json({ msg: "order Added Successfully", order })
 })
 
