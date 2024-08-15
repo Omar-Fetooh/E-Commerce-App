@@ -22,6 +22,8 @@ export const createCategory = catchAsyncHandler(async (req, res, next) => {
         folder: `Ecommerce/categories/${customId}`
     })
 
+    req.filePath = `Ecommerce/categories/${customId}`;
+
     const category = await categoryModel.create({
         name,
         slug: slugify(name, {
@@ -32,6 +34,12 @@ export const createCategory = catchAsyncHandler(async (req, res, next) => {
         createdBy: req.user._id,
         customId
     })
+
+    req.data = {
+        model: categoryModel,
+        id: category._id
+    }
+    throw (new AppError())
 
     res.status(201).json({ msg: "category Added Successfully", category })
 })

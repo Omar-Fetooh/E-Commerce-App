@@ -10,3 +10,9 @@ export const catchAsyncHandler = (fn) => {
         fn(req, res, next).catch(err => next(err))
     }
 }
+
+export const globalErrorHandler = (err, req, res, next) => {
+    const { message, statusCode } = err;
+    res.status(statusCode || 500).json({ message, stack: err.stack });
+    next()
+}
