@@ -28,5 +28,9 @@ export const initApp = (app, express) => {
         next(new AppError(`invalid URL ${req.originalUrl} not found`, 404))
     })
 
-    app.use(globalErrorHandler, deleteFromCloudinary, deleteFromDb)
+    // app.use(globalErrorHandler, deleteFromCloudinary, deleteFromDb)
+    app.use(globalErrorHandler)
+    app.use(deleteFromCloudinary)
+    app.use(deleteFromDb)
+
 }
