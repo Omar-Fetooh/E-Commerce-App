@@ -10,9 +10,9 @@ export const initApp = (app, express) => {
     app.use(cors())
     app.use(express.json())
 
-    app.get("/", (req, res) => {
-        res.status(200, "hello world")
-    })
+    // app.get("/", (req, res) => {
+    //     res.status(200, "hello world")
+    // })
 
     app.use("/users", routers.userRouter)
     app.use('/categories', routers.categoryRouter)
@@ -29,5 +29,4 @@ export const initApp = (app, express) => {
     })
 
     app.use(globalErrorHandler, deleteFromCloudinary, deleteFromDb)
-
 }
