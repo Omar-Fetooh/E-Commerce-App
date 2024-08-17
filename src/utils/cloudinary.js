@@ -1,9 +1,13 @@
+import dotenv from "dotenv"
+import path from 'path'
+dotenv.config({ path: path.resolve("config/.env") });  // I have inserted these 3 lines because multer has problem with .env paths 
+
 import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
-    cloud_name: 'dpfcr3fat',
-    api_key: '399196783359865',
-    api_secret: 'Da4QQxe3LVpCZbXNxVo7R7W_0kw'
+    cloud_name: process.env.cloud_name,
+    api_key: process.env.api_key,
+    api_secret: process.env.api_secret
 });
 
 

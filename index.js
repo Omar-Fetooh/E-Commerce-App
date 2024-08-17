@@ -4,10 +4,13 @@ dotenv.config({ path: path.resolve("config/.env") });
 
 import express from 'express'
 import { initApp } from './src/initApp.js'
-import { createInvoice } from "./src/utils/pdf.js";
 
 const app = express()
+const port = process.env.PORT || 3000
+
 // app.set("case sensitive routing", true)
 
 initApp(app, express)
 
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))

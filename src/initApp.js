@@ -3,12 +3,16 @@ import * as routers from "../src/modules/index.routes.js"
 import { deleteFromCloudinary } from './utils/deleteFromCloudinary.js'
 import { deleteFromDb } from './utils/deleteFromDb.js'
 import { globalErrorHandler } from './utils/error.js'
-
+import cors from "cors"
 export const initApp = (app, express) => {
     connectionDB()
-    const port = process.env.PORT || 3000
 
+    app.use(cors())
     app.use(express.json())
+
+    app.get("/", (req, res) => {
+        res.status(200, "hello world")
+    })
 
     app.use("/users", routers.userRouter)
     app.use('/categories', routers.categoryRouter)
@@ -26,6 +30,4 @@ export const initApp = (app, express) => {
 
     app.use(globalErrorHandler, deleteFromCloudinary, deleteFromDb)
 
-    app.get('/', (req, res) => res.send('Hello World!'))
-    app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 }

@@ -10,11 +10,11 @@ export const auth = (roles = []) => {
             if (!token) {
                 next(new AppError("token is not exists", 400))
             }
-            if (!token.startsWith("omar__")) {
+            if (!token.startsWith(process.env.bearerKey)) {
                 next(new AppError("invalid bearer token", 400))
             }
 
-            const newToken = token.split("omar__")[1]
+            const newToken = token.split(process.env.bearerKey)[1]
             if (!newToken) {
                 next(new AppError("invalid token", 400))
             }
@@ -30,7 +30,7 @@ export const auth = (roles = []) => {
             // Authorization
             if (!roles.includes(user.role)) next(new AppError("you don't have permission", 401))
 
-            if (parseInt(user.passwordChangeAt.getTime() / 1000) > decoded.iat) {
+            if (parseInt(user?.passwordChangeAt?.getTime() / 1000) > decoded.iat) {
                 return res.status(403).json({ msg: "Token expired, please login again" })
             }
             req.user = user;
