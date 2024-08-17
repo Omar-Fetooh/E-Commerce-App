@@ -2,7 +2,7 @@ import connectionDB from '../database/dbConnection.js'
 import * as routers from "../src/modules/index.routes.js"
 import { deleteFromCloudinary } from './utils/deleteFromCloudinary.js'
 import { deleteFromDb } from './utils/deleteFromDb.js'
-import { globalErrorHandler } from './utils/error.js'
+import { AppError, globalErrorHandler } from './utils/error.js'
 import cors from "cors"
 export const initApp = (app, express) => {
     connectionDB()
