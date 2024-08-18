@@ -142,8 +142,8 @@ export const cancelOrder = catchAsyncHandler(async (req, res, next) => {
     }
 
     if ((order.paymentMethod == "cash" && order.status !== "placed") || (order.paymentMethod == "card" && order.status !== "waitPayment")) {
-        console.log(order.paymentMethod);
-        console.log(order.status);
+        // console.log(order.paymentMethod);
+        // console.log(order.status);
 
         return next(new AppError("order can not be canceled", 400))
     }
