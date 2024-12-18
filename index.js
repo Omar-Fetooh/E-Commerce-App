@@ -1,16 +1,24 @@
-import dotenv from "dotenv"
-import path from 'path'
-dotenv.config({ path: path.resolve("config/.env") });
+import express from "express";
+import { config } from "dotenv";
 
-import express from 'express'
-import { initApp } from './src/initApp.js'
+import db_connection from "./DB/connection.js";
+import * as router from "./src/Modules/index.js";
+import { globalResponse } from "./src/Middlewares/error-handling.middleware.js";
 
-const app = express()
-const port = process.env.PORT || 3000
+config();
 
-// app.set("case sensitive routing", true)
+const app = express();
+const port = process.env.PORT || 5000;
 
-initApp(app, express)
+app.use(express.json());
 
+app.use("/categories", router.categoryRouter);
+app.use("/sub-categories", router.subCategoryRouter);
+app.use("/brands", router.brandRouter);
+app.use("/products", router.productRouter);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.use(globalResponse);
+db_connection();
+
+app.get("/", (req, res) => res.send("Hello World!"));
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
