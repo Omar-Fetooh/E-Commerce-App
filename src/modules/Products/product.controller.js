@@ -151,21 +151,31 @@ export const updateProduct = async (req, res, next) => {
 };
 
 export const listProducts = async (req, res, next) => {
-  const { page = 1, limit = 1 } = req.query;
+  const { page = 1, limit = 1, ...filters } = req.query;
+
   const skip = (page - 1) * limit;
   // const products = await Product.find()
   //   .limit(limit)
   //   .skip(skip)
   //   .select("-Images --spescs -categoryId -subCategoryId -brandId");
 
-  const products = await Product.paginate(
-    {},
-    {
-      page,
-      limit,
-      skip,
+  console.log({ filters });
+
+  const filtersAsString = JSON.stringify(filters);
+  const replacedFilters = filtersAsString.replaceAll(
+    /lt|gt|lte|gte|ne|eq|regex/g,
+    (ele) => {
+      return `$${ele}`;
     }
   );
+
+  const parsedFilters = JSON.parse(replacedFilters);
+
+  const products = await Product.paginate(parsedFilters, {
+    page,
+    limit,
+    skip,
+  });
 
   res.status(200).json({
     status: "sucess",
