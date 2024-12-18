@@ -7,6 +7,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  listCategories,
   updateCategory,
 } from "./categories.controller.js";
 import { getDocumentByName } from "../../Middlewares/finders.middleware.js";
@@ -33,3 +34,5 @@ categoryRouter.put(
 );
 
 categoryRouter.delete("/delete/:_id", errorHandler(deleteCategory));
+
+categoryRouter.get("/list", errorHandler(listCategories));

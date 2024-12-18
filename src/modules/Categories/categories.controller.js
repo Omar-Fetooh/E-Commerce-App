@@ -5,6 +5,7 @@ import { Brands, Category, SubCategory } from "../../../DB/Models/index.js";
 
 import { cloudinaryConfig } from "../../Utils/cloudinary.utils.js";
 import { ErrorClass } from "../../Utils/error-class.utils.js";
+import { ApiFeatures } from "../../Utils/api-features.utils.js";
 
 /**
  *@api {POST} /categories/create  create a new Category
@@ -132,5 +133,22 @@ export const deleteCategory = async (req, res, next) => {
     status: "Success",
     message: "Category Deleted Successfully",
     data: category,
+  });
+};
+
+export const listCategories = async (req, res, next) => {
+  const mongooseQuery = Category.find();
+
+  const ApiFeaturesInstance = new ApiFeatures(mongooseQuery, req.query)
+    .pagination()
+    .sort()
+    .filters();
+
+  const categories = await ApiFeaturesInstance.mongooseQuery;
+
+  res.status(200).json({
+    status: "Success",
+    message: "Categories Fetched Successfully",
+    categories,
   });
 };
