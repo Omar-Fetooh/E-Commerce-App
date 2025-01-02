@@ -19,7 +19,7 @@ export class ApiFeatures {
   }
 
   filters() {
-    const { page = 1, limit = 1, sort, ...filters } = this.query;
+    const { page = 1, limit = 1, sort, ...filters } = this.query; // we want to separate the filters object from the req.query obj
 
     const filtersAsString = JSON.stringify(filters);
     const replacedFilters = filtersAsString.replaceAll(

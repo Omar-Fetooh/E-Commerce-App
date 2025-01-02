@@ -152,26 +152,6 @@ export const updateProduct = async (req, res, next) => {
 };
 
 export const listProducts = async (req, res, next) => {
-  // const { page = 1, limit = 1, ...filters } = req.query;
-
-  // const skip = (page - 1) * limit;
-  // // const products = await Product.find()
-  // //   .limit(limit)
-  // //   .skip(skip)
-  // //   .select("-Images --spescs -categoryId -subCategoryId -brandId");
-
-  // console.log({ filters });
-
-  // const filtersAsString = JSON.stringify(filters);
-  // const replacedFilters = filtersAsString.replaceAll(
-  //   /lt|gt|lte|gte|ne|eq|regex/g,
-  //   (ele) => {
-  //     return `$${ele}`;
-  //   }
-  // );
-
-  // const parsedFilters = JSON.parse(replacedFilters);
-
   const mongooseQuery = Product.find();
   const ApiFeaturesInstance = new ApiFeatures(mongooseQuery, req.query)
     .pagination()
