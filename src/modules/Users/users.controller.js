@@ -14,12 +14,13 @@ export const registerUser = async (req, res, next) => {
   }
 
   // hash password
-  const hashedPassword = hashSync(password, +process.env.SALT_ROUNDS);
+  //   const hashedPassword = hashSync(password, +process.env.SALT_ROUNDS);
+  // appllied in the hook
 
   const userObj = new User({
     userName,
     email,
-    password: hashedPassword,
+    password,
     gender,
     age,
     phone,
@@ -67,4 +68,19 @@ export const confirmEmail = async (req, res) => {
     throw new ErrorClass("User not Found", 400);
   }
   res.status(200).json({ message: "Email Confirmed" });
+};
+
+export const updateAccount = async (req, res, next) => {
+  const { userId } = req.params;
+
+  const user = await User.findByIdAndUpdate(userId, req.body, { new: true });
+  if (!user) {
+    next(new ErrorClass("User not exists", 404));
+  }
+
+  res.status(200).json({
+    status: "Success",
+    message: "Account Updated successfully",
+    data: user,
+  });
 };

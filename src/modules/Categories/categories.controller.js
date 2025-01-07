@@ -120,15 +120,6 @@ export const deleteCategory = async (req, res, next) => {
     `${process.env.UPLOADS_FOLDER}/Categories/${category.customId}`
   );
 
-  // TODO delete subCategories
-  const deletedSubCategories = await SubCategory.deleteMany({
-    categoryId: category._id,
-  });
-  // TODO delete Brands
-  if (deletedSubCategories.deletedCount) {
-    await Brands.deleteMany({ categoryId: category._id });
-  }
-
   res.status(200).json({
     status: "Success",
     message: "Category Deleted Successfully",

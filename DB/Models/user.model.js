@@ -1,3 +1,4 @@
+import { hashSync } from "bcrypt";
 import mongoose from "../global-setup.js";
 const { Schema, model } = mongoose;
 
@@ -48,4 +49,24 @@ export const userSchema = new Schema(
   { timestamps: true }
 );
 
-export const User = mongoose.model.User || model("User", userSchema);
+userSchema.pre("save", function (next) {
+  console.log("=====  pre hook =========");
+
+  console.log(this.isModified("password"), this.password);
+
+  this.password = hashSync(this.password, +process.env.SALT_ROUNDS);
+
+  console.log(this);
+
+  next();
+});
+
+userSchema.pre("findOneAndUpdate", function () {
+  if (this._update.password)
+    this._update.password = hashSync(
+      this._update.password,
+      +process.env.SALT_ROUNDS
+    );
+});
+
+export const User = mongoose.models.User || model("User", userSchema);

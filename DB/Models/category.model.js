@@ -41,5 +41,25 @@ const categorySchema = new Schema(
   }
 );
 
+categorySchema.post("findOneAndDelete", async function () {
+  const _id = this.getQuery()._id;
+
+  const deletedSubCategories = await mongoose.models.SubCategory.deleteMany({
+    categoryId: _id,
+  });
+
+  if (deletedSubCategories.deletedCount) {
+    const deletedBrands = await mongoose.models.Brands.deleteMany({
+      categoryId: _id,
+    });
+
+    if (deletedBrands.deletedCount) {
+      await mongoose.models.Product.deleteMany({
+        categoryId: _id,
+      });
+    }
+  }
+});
+
 export const Category =
   mongoose.models.CategoryModel || model("Category", categorySchema);
