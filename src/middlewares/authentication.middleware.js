@@ -28,6 +28,7 @@ export const auth = () => {
     }
 
     req.authUser = isUserExists;
+
     next();
   };
 };

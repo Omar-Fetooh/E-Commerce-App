@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { extensions } from "../../Utils/file-extensions.js";
+import { extensions } from "../../Utils/index.js";
 
 import * as middlewares from "../../Middlewares/index.js";
 import { getDocumentByName } from "../../Middlewares/finders.middleware.js";
