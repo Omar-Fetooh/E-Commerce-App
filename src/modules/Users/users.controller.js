@@ -1,11 +1,25 @@
 import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User } from "../../../DB/Models/index.js";
+import { Address, User } from "../../../DB/Models/index.js";
 import { ErrorClass } from "../../Utils/index.js";
 import { sendEmailService } from "../../Services/send-email.service.js";
 
 export const registerUser = async (req, res, next) => {
-  const { userName, email, password, gender, age, phone, userType } = req.body;
+  const {
+    userName,
+    email,
+    password,
+    gender,
+    age,
+    phone,
+    userType,
+    country,
+    city,
+    postalCode,
+    buildingNumber,
+    floorNumber,
+    addressLabel,
+  } = req.body;
 
   // Check if email exists
   const isEmailExists = await User.findOne({ email });
@@ -27,6 +41,17 @@ export const registerUser = async (req, res, next) => {
     userType,
   });
 
+  const addressObj = new Address({
+    userId: userObj._id,
+    country,
+    city,
+    postalCode,
+    buildingNumber,
+    floorNumber,
+    addressLabel,
+    isDefault: true,
+  });
+
   // sendEmail Verification
 
   const token = jwt.sign({ _id: userObj._id }, process.env.SECRET_APPKEY, {
@@ -46,11 +71,13 @@ export const registerUser = async (req, res, next) => {
   }
 
   const newUser = await userObj.save();
+  const savedAddress = await addressObj.save();
 
   res.status(201).json({
     status: "Success",
     message: "User Created Successfully",
     data: newUser,
+    address: savedAddress,
   });
 };
 

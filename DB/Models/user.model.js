@@ -50,14 +50,7 @@ export const userSchema = new Schema(
 );
 
 userSchema.pre("save", function (next) {
-  console.log("=====  pre hook =========");
-
-  console.log(this.isModified("password"), this.password);
-
   this.password = hashSync(this.password, +process.env.SALT_ROUNDS);
-
-  console.log(this);
-
   next();
 });
 
