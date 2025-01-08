@@ -5,3 +5,4 @@ export * from "./Sub-Categories/sub-categories.routes.js";
 export * from "./Products/product.routes.js";
 export * from "./Users/user.routes.js";
 export * from "./Address/address.routes.js";
+export * from "./Cart/cart.routes.js";
