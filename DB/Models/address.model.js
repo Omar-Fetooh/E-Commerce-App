@@ -39,6 +39,7 @@ const addressSchema = new Schema(
     isMarkedAsDeleted: {
       type: Boolean,
       required: false,
+      default: false,
     },
   },
   { timestamps: true }
