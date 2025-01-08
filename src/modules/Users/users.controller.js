@@ -1,4 +1,4 @@
-import { hashSync } from "bcrypt";
+import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../../../DB/Models/index.js";
 import { ErrorClass } from "../../Utils/index.js";
@@ -68,6 +68,26 @@ export const confirmEmail = async (req, res) => {
     throw new ErrorClass("User not Found", 400);
   }
   res.status(200).json({ message: "Email Confirmed" });
+};
+
+export const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorClass("User not exist", 404));
+  }
+
+  const isPassMatch = compareSync(password, user.password);
+  if (!isPassMatch) {
+    return next(new ErrorClass("Password is not correct"));
+  }
+
+  const token = jwt.sign({ userId: user._id }, process.env.LOGIN_SECRET);
+
+  res
+    .status(200)
+    .json({ status: "Success", message: "User logged in successfully", token });
 };
 
 export const updateAccount = async (req, res, next) => {

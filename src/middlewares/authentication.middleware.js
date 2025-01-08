@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-import User from "../../database/models/index.js";
-import { ErrorClass } from "../utils/index.js";
+import { ErrorClass } from "../Utils/index.js";
+import { User } from "../../DB/Models/user.model.js";
 
 export const auth = () => {
   return async (req, res, next) => {
