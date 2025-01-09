@@ -18,6 +18,7 @@ app.use("/brands", router.brandRouter);
 app.use("/products", router.productRouter);
 app.use("/users", router.userRouter);
 app.use("/address", router.addressRouter);
+app.use("/carts", router.cartRouter);
 
 app.use(globalResponse);
 db_connection();

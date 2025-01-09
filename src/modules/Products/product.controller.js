@@ -38,13 +38,13 @@ export const addProduct = async (req, res, next) => {
     next(new ErrorClass("Brand is not found", 404));
   }
 
-  // let appliedPrice = price;
+  let appliedPrice = price;
 
-  // if (discountType == "Percentage") {
-  //   appliedPrice = price * ((100 - discountAmount) / 100); // 30% sale and price is 100 ====>> 100 * ((100-30)/100)
-  // } else if (discountType == "Fixed") {
-  //   appliedPrice -= discountAmount;
-  // }
+  if (discountType == "Percentage") {
+    appliedPrice = price * ((100 - discountAmount) / 100); // 30% sale and price is 100 ====>> 100 * ((100-30)/100)
+  } else if (discountType == "Fixed") {
+    appliedPrice -= discountAmount;
+  }
 
   // uploading images
 
