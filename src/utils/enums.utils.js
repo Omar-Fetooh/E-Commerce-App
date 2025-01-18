@@ -13,3 +13,8 @@ export const UserTypes = {
   BUYER: "Buyer",
   ADMIN: "Admin",
 };
+
+export const CouponType = {
+  PERCENTAGE: "Percentage",
+  FIXED: "Fixed",
+};

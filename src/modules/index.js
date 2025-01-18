@@ -6,3 +6,4 @@ export * from "./Products/product.routes.js";
 export * from "./Users/user.routes.js";
 export * from "./Address/address.routes.js";
 export * from "./Cart/cart.routes.js";
+export * from "./Coupons/coupon.routes.js";
