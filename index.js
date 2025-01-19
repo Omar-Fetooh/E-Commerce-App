@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import db_connection from "./DB/connection.js";
 import * as router from "./src/Modules/index.js";
 import { globalResponse } from "./src/Middlewares/error-handling.middleware.js";
+import { disableCouponCronJob } from "./src/Utils/index.js";
 
 config();
 
@@ -22,6 +23,9 @@ app.use("/carts", router.cartRouter);
 app.use("/coupons", router.couponRouter);
 
 app.use(globalResponse);
+
+disableCouponCronJob();
+
 db_connection();
 
 app.get("/", (req, res) => res.send("Hello World!"));
