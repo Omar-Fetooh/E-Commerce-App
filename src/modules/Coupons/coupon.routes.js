@@ -2,8 +2,14 @@ import { Router } from "express";
 
 import * as middlewares from "../../Middlewares/index.js";
 
-import { createCoupon } from "./coupon.controller.js";
-import { CreateCouponSchema } from "./coupon.schema.js";
+import {
+  createCoupon,
+  disableEnableCoupon,
+  getCouponById,
+  getCoupons,
+  updateCoupon,
+} from "./coupon.controller.js";
+import { CreateCouponSchema, updateCouponSchema } from "./coupon.schema.js";
 
 const { auth, errorHandler, validationMiddleware } = middlewares;
 
@@ -14,4 +20,20 @@ couponRouter.post(
   auth(),
   validationMiddleware(CreateCouponSchema),
   errorHandler(createCoupon)
+);
+
+couponRouter.get("/", errorHandler(getCoupons));
+couponRouter.get("/details/:couponId", errorHandler(getCouponById));
+
+couponRouter.put(
+  "/update/:couponId",
+  auth(),
+  validationMiddleware(updateCouponSchema),
+  errorHandler(updateCoupon)
+);
+
+couponRouter.patch(
+  "/enable/:couponId",
+  auth(),
+  errorHandler(disableEnableCoupon)
 );

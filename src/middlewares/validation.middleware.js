@@ -21,7 +21,7 @@ export const validationMiddleware = (schema) => {
 
       // If there is an error, push the error details to the validationErrors array
       if (validationResult?.error) {
-        validationErrors.push(validationResult?.error?.details);
+        validationErrors.push(...validationResult?.error?.details);
       }
     }
 
