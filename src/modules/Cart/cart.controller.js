@@ -12,7 +12,7 @@ export const addCart = async (req, res, next) => {
   });
 
   if (!product) {
-    return next(new ErrorClass("product not found or out of stock "));
+    return next(new ErrorClass("product not found or out of stock ", 400));
   }
 
   const cart = await Cart.findOne({ userId });
@@ -46,7 +46,7 @@ export const addCart = async (req, res, next) => {
 
   cart.products.push({ productId, quantity, price: product.appliedPrice });
 
-  cart.subTotal += product.quantity * product.appliedPrice;
+  cart.subTotal += quantity * product.appliedPrice;
 
   await cart.save();
   return res.status(201).json({

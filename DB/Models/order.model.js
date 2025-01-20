@@ -1,5 +1,7 @@
 import { OrderStatus, PaymentMethods } from "../../src/Utils/index.js";
 import mongoose from "../global-setup.js";
+import { Coupon } from "./coupon.model.js";
+import { Product } from "./product.model.js";
 
 const { Schema, model } = mongoose;
 
@@ -37,7 +39,6 @@ export const orderSchema = new Schema(
     },
     addressId: {
       type: mongoose.Types.ObjectId,
-      required: true,
     },
     contactNumber: {
       type: String,
@@ -92,5 +93,21 @@ export const orderSchema = new Schema(
     timestamps: true,
   }
 );
+
+orderSchema.post("save", async function () {
+  for (const product of this.products) {
+    await Product.updateOne(
+      { _id: product.productId },
+      { $inc: { stock: -product.quantity } }
+    );
+  }
+
+  if (this.couponId) {
+    const coupon = await Coupon.findById(this.couponId);
+    coupon.Users.find((u) => u.userId.toString() === this.userId.toString())
+      .usageCount++;
+    await coupon.save();
+  }
+});
 
 export const Order = mongoose.models.Order || model("Order", orderSchema);
