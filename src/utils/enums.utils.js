@@ -18,3 +18,21 @@ export const CouponType = {
   PERCENTAGE: "Percentage",
   FIXED: "Fixed",
 };
+
+export const PaymentMethods = {
+  Stripe: "stripe",
+  Paymob: "paymob",
+  Cash: "cash",
+};
+
+export const OrderStatus = {
+  Pending: "pending",
+  Placed: "placed",
+  Confirmed: "confirmed",
+  Cancelled: "cancelled",
+  Refunded: "refunded",
+  Delivered: "delivered",
+  Returned: "returned",
+  Dropped: "droppeds",
+  OnWay: "onway",
+};
