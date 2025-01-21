@@ -1,10 +1,21 @@
 import { Router } from "express";
 
 import * as middlewares from "../../Middlewares/index.js";
-import { createOrder } from "./order.controller.js";
+import {
+  cancelOrder,
+  createOrder,
+  deliverOrder,
+  listOrders,
+} from "./order.controller.js";
 
 const { auth, errorHandler } = middlewares;
 
 export const orderRouter = Router();
 
 orderRouter.post("/create", auth(), errorHandler(createOrder));
+
+orderRouter.put("/cancel/:orderId", auth(), errorHandler(cancelOrder));
+
+orderRouter.put("/deliver/:orderId", auth(), errorHandler(deliverOrder));
+
+orderRouter.get("/", auth(), errorHandler(listOrders));

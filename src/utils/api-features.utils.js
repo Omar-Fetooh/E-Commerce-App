@@ -10,7 +10,7 @@ export class ApiFeatures {
   }
 
   pagination() {
-    const { page = 1, limit = 1 } = this.query;
+    const { page = 1, limit = 3 } = this.query;
 
     const skip = (page - 1) * limit;
     this.mongooseQuery.limit(limit).skip(skip);

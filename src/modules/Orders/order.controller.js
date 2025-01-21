@@ -1,6 +1,11 @@
 import { DateTime } from "luxon";
-import { Address, Cart, Order } from "../../../DB/Models/index.js";
-import { ErrorClass, OrderStatus, PaymentMethods } from "../../Utils/index.js";
+import { Address, Cart, Order, Product } from "../../../DB/Models/index.js";
+import {
+  ApiFeatures,
+  ErrorClass,
+  OrderStatus,
+  PaymentMethods,
+} from "../../Utils/index.js";
 import { applyCoupon, validateCoupon } from "./Utils/order.utils.js";
 
 export const createOrder = async (req, res, next) => {
@@ -89,4 +94,100 @@ export const createOrder = async (req, res, next) => {
   await cart.save();
 
   res.status(201).json({ message: "order created Successfully", order });
+};
+
+export const cancelOrder = async (req, res, next) => {
+  const userId = req.authUser._id;
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({
+    _id: orderId,
+    userId,
+    orderStatus: {
+      $in: [OrderStatus.Pending, OrderStatus.Placed, OrderStatus.Confirmed],
+    },
+  });
+
+  if (!order) {
+    return next(new ErrorClass("Order not found", 400));
+  }
+
+  const orderDate = DateTime.fromJSDate(order.createdAt);
+  const currentDate = DateTime.now();
+
+  const diff = Math.ceil(
+    Number(currentDate.diff(orderDate, "days").toObject().days).toFixed(2)
+  );
+
+  console.log(diff);
+
+  if (diff > 3) {
+    return next(
+      new ErrorClass("Sorry order has been bought more than 3 days", 400)
+    );
+  }
+
+  order.orderStatus = OrderStatus.Cancelled;
+  order.canceledBy = userId;
+  order.canceledAt = DateTime.now();
+
+  await order.save();
+
+  const updatePromises = order.products.map((product) =>
+    Product.updateOne(
+      { _id: product.productId },
+      { $inc: { stock: product.quantity } }
+    )
+  );
+
+  await Promise.all(updatePromises);
+
+  res.status(200).json({ message: "Order Cancelled Successfully", order });
+};
+
+export const deliverOrder = async (req, res, next) => {
+  const userId = req.authUser._id;
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({
+    _id: orderId,
+    userId,
+    orderStatus: {
+      $in: [OrderStatus.Pending, OrderStatus.Placed, OrderStatus.Confirmed],
+    },
+  });
+
+  if (!order) {
+    return next(new ErrorClass("Order not found", 400));
+  }
+
+  order.orderStatus = OrderStatus.Delivered;
+  order.deliveredBy = userId;
+  order.deliverdAt = DateTime.now();
+
+  await order.save();
+
+  res.status(200).json({ message: "ordered Delivered", order });
+};
+
+export const listOrders = async (req, res, next) => {
+  const mongooseQuery = Order.find();
+  const userId = req.authUser._id;
+
+  const query = { userId, ...req.query };
+
+  const ApiFeaturesInstance = new ApiFeatures(mongooseQuery, query)
+    .pagination()
+    .sort()
+    .filters();
+
+  const orders = await ApiFeaturesInstance.mongooseQuery;
+
+  console.log(orders);
+
+  res.status(200).json({
+    status: "Success",
+    message: "orders Fetched Successfully",
+    orders,
+  });
 };
