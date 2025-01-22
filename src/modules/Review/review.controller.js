@@ -1,5 +1,5 @@
 import { Order, Product, Review } from "../../../DB/Models/index.js";
-import { ErrorClass, OrderStatus } from "../../Utils/index.js";
+import { ErrorClass, OrderStatus, ReviewStatus } from "../../Utils/index.js";
 
 export const addReview = async (req, res, next) => {
   const userId = req.authUser._id;
@@ -42,4 +42,38 @@ export const addReview = async (req, res, next) => {
   const review = await Review.create(reviewObj);
 
   res.status(201).json({ message: "review created Succesfully", review });
+};
+
+export const listReviews = async (req, res, next) => {
+  const reviews = await Review.find().populate([
+    {
+      path: "userId",
+      select: "userName email -_id",
+    },
+    {
+      path: "productId",
+      select: "title rating -_id",
+    },
+  ]);
+
+  res.status(200).json({ message: "reviews fetched successfully", reviews });
+};
+
+export const approveOrRejectReview = async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { accept, reject } = req.body;
+
+  if (accept && reject) {
+    return next(new ErrorClass("please select accept or reject", 400));
+  }
+
+  const review = await Review.findByIdAndUpdate(reviewId, {
+    reviewStatus: accept
+      ? ReviewStatus.Accepted
+      : reject
+      ? ReviewStatus.Rejected
+      : ReviewStatus.Pending,
+  });
+
+  res.status(200).json({ message: "Review updated Successfully", review });
 };

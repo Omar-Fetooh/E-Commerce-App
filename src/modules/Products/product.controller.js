@@ -5,6 +5,7 @@ import {
   calculateProductPrice,
   cloudinaryConfig,
   ErrorClass,
+  ReviewStatus,
 } from "../../Utils/index.js";
 import { Brands } from "../../../DB/Models/brand.model.js";
 import { Product } from "../../../DB/Models/product.model.js";
@@ -152,7 +153,11 @@ export const updateProduct = async (req, res, next) => {
 };
 
 export const listProducts = async (req, res, next) => {
-  const mongooseQuery = Product.find();
+  const mongooseQuery = Product.find().populate({
+    path: "Reviews",
+    match: { reviewStatus: ReviewStatus.Accepted },
+    select: "reviewRating reviewBody",
+  });
   const ApiFeaturesInstance = new ApiFeatures(mongooseQuery, req.query)
     .pagination()
     .sort()

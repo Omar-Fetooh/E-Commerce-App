@@ -1,4 +1,4 @@
-import { ErrorClass } from "../utils/index.js";
+import { ErrorClass } from "../Utils/index.js";
 
 export const authorizationMiddleware = (allowedRoles) => {
   return async (req, res, next) => {
