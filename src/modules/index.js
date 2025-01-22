@@ -8,3 +8,4 @@ export * from "./Address/address.routes.js";
 export * from "./Cart/cart.routes.js";
 export * from "./Coupons/coupon.routes.js";
 export * from "./Orders/order.routes.js";
+export * from "./Review/review.routes.js";
