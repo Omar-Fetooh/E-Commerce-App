@@ -46,8 +46,6 @@ export const createSubCategory = async (req, res, next) => {
 
   const subCategory = await SubCategory.create(subCategoryObj);
 
-  console.log("hello");
-
   res.status(201).json({
     status: "Success",
     message: "SubCategory created Successfully",

@@ -30,5 +30,10 @@ disableCouponCronJob();
 
 db_connection();
 
+app.use("*", (req, res, next) => {
+  next({ message: "Not found" });
+  res.status(404).json({ message: "Not found" });
+});
+
 app.get("/", (req, res) => res.send("Hello World!"));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

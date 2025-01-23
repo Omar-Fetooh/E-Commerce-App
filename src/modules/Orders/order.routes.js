@@ -6,6 +6,7 @@ import {
   createOrder,
   deliverOrder,
   listOrders,
+  payWithStripe,
 } from "./order.controller.js";
 
 const { auth, errorHandler } = middlewares;
@@ -19,3 +20,5 @@ orderRouter.put("/cancel/:orderId", auth(), errorHandler(cancelOrder));
 orderRouter.put("/deliver/:orderId", auth(), errorHandler(deliverOrder));
 
 orderRouter.get("/", auth(), errorHandler(listOrders));
+
+orderRouter.post("/stripe-pay/:orderId", auth(), errorHandler(payWithStripe));
