@@ -31,7 +31,7 @@ disableCouponCronJob();
 db_connection();
 
 app.use("*", (req, res, next) => {
-  next({ message: "Not found" });
+  // next({ message: "Not found" });
   res.status(404).json({ message: "Not found" });
 });
 

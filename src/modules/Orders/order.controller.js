@@ -249,3 +249,16 @@ export const payWithStripe = async (req, res, next) => {
 
   res.status(200).json({ checkoutSession });
 };
+
+export const stripeWebhookLocal = async (req, res, next) => {
+  const orderId = req.body.data.object.metadata.orderId;
+
+  const order = await Order.findById(orderId);
+  order.orderStatus = OrderStatus.Confirmed;
+  await order.save();
+
+  console.log(order);
+
+  // console.log(`webhook received`, req.body.data.object.metadata.orderId);
+  res.status(200).json({ message: "webhook received" });
+};

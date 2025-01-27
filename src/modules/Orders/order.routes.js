@@ -7,6 +7,7 @@ import {
   deliverOrder,
   listOrders,
   payWithStripe,
+  stripeWebhookLocal,
 } from "./order.controller.js";
 
 const { auth, errorHandler } = middlewares;
@@ -22,3 +23,5 @@ orderRouter.put("/deliver/:orderId", auth(), errorHandler(deliverOrder));
 orderRouter.get("/", auth(), errorHandler(listOrders));
 
 orderRouter.post("/stripe-pay/:orderId", auth(), errorHandler(payWithStripe));
+
+orderRouter.post("/webhook", errorHandler(stripeWebhookLocal));
