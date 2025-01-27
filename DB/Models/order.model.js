@@ -88,6 +88,7 @@ export const orderSchema = new Schema(
     },
     deliverdAt: Date,
     cancelledAt: Date,
+    payment_intent: String,
   },
   {
     timestamps: true,
@@ -104,8 +105,10 @@ orderSchema.post("save", async function () {
 
   if (this.couponId) {
     const coupon = await Coupon.findById(this.couponId);
-    coupon.Users.find((u) => u.userId.toString() === this.userId.toString())
+
+    coupon.Users.find((u) => u.userId.toString() === this.userId._id.toString())
       .usageCount++;
+
     await coupon.save();
   }
 });

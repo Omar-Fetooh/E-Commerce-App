@@ -7,6 +7,7 @@ import {
   deliverOrder,
   listOrders,
   payWithStripe,
+  refundOrder,
   stripeWebhookLocal,
 } from "./order.controller.js";
 
@@ -25,3 +26,5 @@ orderRouter.get("/", auth(), errorHandler(listOrders));
 orderRouter.post("/stripe-pay/:orderId", auth(), errorHandler(payWithStripe));
 
 orderRouter.post("/webhook", errorHandler(stripeWebhookLocal));
+
+orderRouter.post("/refund/:orderId", auth(), errorHandler(refundOrder));

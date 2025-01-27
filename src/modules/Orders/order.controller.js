@@ -8,8 +8,11 @@ import {
 } from "../../Utils/index.js";
 import { applyCoupon, validateCoupon } from "./Utils/order.utils.js";
 import {
+  confirmPaymentIntent,
   createCheckoutSession,
+  createPaymentIntent,
   createStripeCoupon,
+  refundPaymentIntent,
 } from "../../payment-handler/stripe.js";
 
 export const createOrder = async (req, res, next) => {
@@ -205,7 +208,7 @@ export const payWithStripe = async (req, res, next) => {
   }).populate([
     {
       path: "userId",
-      select: "email -_id",
+      select: "email _id",
     },
     {
       path: "products.productId",
@@ -246,19 +249,51 @@ export const payWithStripe = async (req, res, next) => {
   }
 
   const checkoutSession = await createCheckoutSession(paymentObj);
+  const paymentIntent = await createPaymentIntent({
+    amount: order.total,
+    currency: "EGP",
+  });
 
-  res.status(200).json({ checkoutSession });
+  order.payment_intent = paymentIntent.id;
+  await order.save();
+  console.log({ order });
+
+  res.status(200).json({ checkoutSession, paymentIntent });
 };
 
 export const stripeWebhookLocal = async (req, res, next) => {
   const orderId = req.body.data.object.metadata.orderId;
 
   const order = await Order.findById(orderId);
+  if (!order) return next(new ErrorClass("order not found", 404));
+
+  const confirmPaymentIntentDetails = await confirmPaymentIntent(
+    order.payment_intent
+  );
+
   order.orderStatus = OrderStatus.Confirmed;
   await order.save();
 
-  console.log(order);
-
-  // console.log(`webhook received`, req.body.data.object.metadata.orderId);
   res.status(200).json({ message: "webhook received" });
+};
+
+export const refundOrder = async (req, res, next) => {
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({
+    _id: orderId,
+    orderStatus: OrderStatus.Confirmed,
+    userId: req.authUser._id,
+  });
+  if (!order)
+    return next(new ErrorClass("order not found or can not be refunded", 404));
+
+  const refund = await refundPaymentIntent(order.payment_intent);
+  order.orderStatus = OrderStatus.Refunded;
+
+  await order.save();
+
+  res
+    .status(200)
+    .json({ message: "Order refunded successfully", order: refund });
 };
