@@ -1,10 +1,13 @@
 import express from "express";
 import { config } from "dotenv";
+import cors from "cors";
 
 import db_connection from "./DB/connection.js";
 import * as router from "./src/Modules/index.js";
 import { globalResponse } from "./src/Middlewares/error-handling.middleware.js";
 import { disableCouponCronJob } from "./src/Utils/index.js";
+import { Server } from "socket.io";
+import { establishConnection } from "./src/Utils/socket.io.utils.js";
 
 config();
 
@@ -36,4 +39,13 @@ app.use("*", (req, res, next) => {
 });
 
 app.get("/", (req, res) => res.send("Hello World!"));
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+const server = app.listen(port, () =>
+  console.log(`Example app listening on port ${port}!`)
+);
+
+const io = establishConnection(server);
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
