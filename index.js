@@ -1,12 +1,12 @@
 import express from "express";
-import { config } from "dotenv";
 import cors from "cors";
+import { config } from "dotenv";
+import { Server } from "socket.io";
 
 import db_connection from "./DB/connection.js";
 import * as router from "./src/Modules/index.js";
 import { globalResponse } from "./src/Middlewares/error-handling.middleware.js";
 import { disableCouponCronJob } from "./src/Utils/index.js";
-import { Server } from "socket.io";
 import { establishConnection } from "./src/Utils/socket.io.utils.js";
 
 config();

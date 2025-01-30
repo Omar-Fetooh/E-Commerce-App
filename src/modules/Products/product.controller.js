@@ -93,7 +93,7 @@ export const addProduct = async (req, res, next) => {
 
   const product = await Product.create(productObj);
 
-  getSocket().emmit("addedDone", { message: "New Product added " });
+  getSocket().emit("addedDone", { message: "New Product added " });
 
   res.status(201).json({
     status: "Success",

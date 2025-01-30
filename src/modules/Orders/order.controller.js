@@ -14,6 +14,7 @@ import {
   createStripeCoupon,
   refundPaymentIntent,
 } from "../../payment-handler/stripe.js";
+import { generateQrCode } from "../../Services/qr-code.service.js";
 
 export const createOrder = async (req, res, next) => {
   const userId = req.authUser._id;
@@ -96,11 +97,13 @@ export const createOrder = async (req, res, next) => {
 
   const order = await orderObj.save();
 
+  const qr = await generateQrCode([orderObj.total, orderObj.userId]); // generating qrCode
+
   cart.products = [];
   cart.subTotal = 0;
   await cart.save();
 
-  res.status(201).json({ message: "order created Successfully", order });
+  res.status(201).json({ message: "order created Successfully", order, qr });
 };
 
 export const cancelOrder = async (req, res, next) => {
