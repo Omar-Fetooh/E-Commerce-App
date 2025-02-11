@@ -2,63 +2,38 @@ import {
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
+  GraphQLList,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
 } from "graphql";
+import { ProductType } from "../Types/product.type.js";
+import { listProductsResolver } from "../Resolvers/list-products.resolver.js";
+import { createCouponResolver } from "../Resolvers/create-coupon.resolver.js";
+import { couponType, createCouponArgs } from "../Types/coupon.type.js";
 
 export const mainSchema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "RootQuery",
     description: "just testing a root Query ",
     fields: {
-      sayHello: {
-        type: GraphQLString,
-        name: "sayHello",
-        description: "say Hello query",
-        resolve: () => {
-          return "Hello World";
-        },
+      listProducts: {
+        name: "list products",
+        description: "a simple query to list products",
+        type: new GraphQLList(ProductType),
+        resolve: listProductsResolver,
       },
-      returnBoolean: {
-        type: GraphQLBoolean,
-        name: "returnBoolean",
-        description: "A simple boolean query",
-        resolve: () => {
-          return true;
-        },
-      },
-      returnObject: {
-        name: "returnObject",
-        description: "returnObject query",
-        type: new GraphQLObjectType({
-          name: "returnObjectType",
-          description: "a simple object type",
-          fields: {
-            message: { type: GraphQLString },
-            statusCode: { type: GraphQLInt },
-          },
-        }),
-        resolve: () => {
-          return {
-            message: "Hello again",
-            statusCode: 200,
-          };
-        },
-      },
-      sendData: {
-        name: "sendData",
-        description: "a simple query to send data",
-        type: GraphQLString,
-        args: {
-          name: { type: GraphQLString },
-          age: { type: GraphQLFloat },
-        },
-
-        resolve: (parent, args) => {
-          console.log(args);
-          return `hello ${args.name}`;
-        },
+    },
+  }),
+  mutation: new GraphQLObjectType({
+    name: "RootMutation",
+    description: "this is a root mutation",
+    fields: {
+      createCoupon: {
+        name: "createCoupon",
+        type: couponType,
+        args: createCouponArgs,
+        resolve: createCouponResolver,
       },
     },
   }),
