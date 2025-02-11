@@ -2,10 +2,14 @@ import express from "express";
 import cors from "cors";
 import * as router from "./src/Modules/index.js";
 import { globalResponse } from "./src/Middlewares/index.js";
+import { createHandler } from "graphql-http/lib/use/express";
+import { mainSchema } from "./src/GraphQL/Schema/main.schema.js";
 
 export const routerHandler = (app) => {
   app.use(cors());
   app.use(express.json());
+
+  app.use("/graphql", createHandler({ schema: mainSchema }));
 
   app.use("/categories", router.categoryRouter);
   app.use("/sub-categories", router.subCategoryRouter);
